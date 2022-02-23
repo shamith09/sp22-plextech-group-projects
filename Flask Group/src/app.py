@@ -69,6 +69,7 @@ def top_10_pleets():
     # for i in range(0, min(10, len(Pleets))):
     #     arr.append(Pleets[i])
     # return flask.Response(json.dumps({"pleets": arr}), status=200)
+    return {'pleets': Pleets[:10]}, 200
     return flask.Response(json.dumps({"pleets": Pleets[:10]}), status=200)
 
 # GET all pleets from a user
@@ -125,5 +126,9 @@ def edit_profile(user_id):
             update()
             return flask.Response(json.dumps({"message": "User Profile Successfully edited!"}), status=200)
     return flask.Response(json.dumps({"message": "User not found!"}), status=404)
+
+@app.route("/")
+def hello_world():
+    return {'data': 'Hello World'}
 
 app.run(debug=True, port=5001)

@@ -107,6 +107,16 @@ def test_put_edit_profile():
 
 @pytest.mark.usefixtures("cleanup")
 def test_get_one():
+    sample_pleet = {
+        "pleet_id": "45be55eb-27d1-4350-8d51-9ca2512229ea",
+        "user": {
+            "user_id": "714edd71-799d-4c25-bb55-9dba9b095ae9",
+            "display name": "Dev Bali",
+            "username": "devbali"
+        },
+        "text": "Sample pleet",
+        "datetime": 1642567497
+    }
     r = requests.post(f"{url}/pleets", data={"username": "incorrectusername","text":"New pleet"})
     assert r.status_code == 404, "Status code should be 404"
     r = requests.post(f"{url}/pleets", data={"username": "devbali","text":"New pleet"})
