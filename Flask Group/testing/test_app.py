@@ -35,6 +35,7 @@ def test_get_all():
     response = r.json()
     assert "pleets" in response, "Wrong format in /pleets"
     assert len(response["pleets"]) == 3, "Incorrect number of pleets returned in /pleets"
+    print(response["pleets"])
     assert sample_pleet in response["pleets"], "Sample pleet not found in response"
 
 @pytest.mark.usefixtures("cleanup")

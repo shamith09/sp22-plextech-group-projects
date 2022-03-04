@@ -1,10 +1,9 @@
 import json
-import flask
 from flask import Flask, request
 import os
 from reset_data import reset
 import uuid
-from datetime import datetime
+import time
 
 ####################
 ### This block initializes the arrays "Users" and "Pleets" from the json file storage system
@@ -28,6 +27,7 @@ def update():
             "users": Users,
             "pleets": Pleets
         }, datafile)
+
 
 ####################
 ### Flask work starts here
@@ -53,14 +53,28 @@ def reset_data():
 # Pleets[i]['_id'] == pleet_id
 # flask.Response(body, status=200)
 # json.dumps() -- converts python dictionary to json format
+# dictionary[new_key] = dictionary.pop(old_key)
+# dictionary_copy = dictionary.copy()
 
 # GET pleet from pleet_id
 @app.route("/pleets/<pleet_id>", methods=["GET"])
 def get_pleet(pleet_id):
     for pleet in Pleets:
         if pleet['_id'] == pleet_id:
-            return flask.Response(json.dumps(pleet), status=200)
-    return flask.Response(json.dumps({"message": "User not found!"}), status=404)
+            for u in Users: 
+                if u["_id"] == pleet["user_id"]:
+                    user_copy = u.copy()
+                    user_copy['user_id'] = user_copy.pop('_id')
+                    print(u)
+
+            result = {
+                "pleet_id": pleet['_id'],
+                "user": user_copy,
+                "text": pleet['text'],
+                "datetime": pleet['datetime']
+            }
+            return result, 200
+    return {"message": "User not found!"}, 404
 
 # GET top 10 recent pleets
 @app.route("/pleets", methods=["GET"])
@@ -69,22 +83,47 @@ def top_10_pleets():
     # for i in range(0, min(10, len(Pleets))):
     #     arr.append(Pleets[i])
     # return flask.Response(json.dumps({"pleets": arr}), status=200)
-    return {'pleets': Pleets[:10]}, 200
-    return flask.Response(json.dumps({"pleets": Pleets[:10]}), status=200)
+    result_list = []
+    for pleet in Pleets[:10]:
+        for u in Users: 
+            if u["_id"] == pleet["user_id"]:
+                user_copy = u.copy()
+                user_copy['user_id'] = user_copy.pop('_id')
+        result = {
+            "pleet_id": pleet['_id'],
+            "user": user_copy,
+            "text": pleet['text'],
+            "datetime": pleet['datetime']
+        }
+        result_list.append(result)
+    return {'pleets': result_list}, 200
 
 # GET all pleets from a user
 @app.route("/users/<user_id>/pleets", methods=["GET"])
 def get_all_pleets(user_id):
+    result_list = []
     pleets_arr = [p for p in Pleets if p["user_id"] == user_id]
+    for u in Users: 
+        if u["_id"] == user_id:
+            user_copy = u.copy()
+            user_copy['user_id'] = user_copy.pop('_id')
+    for pleet in pleets_arr:
+        result = {
+            "pleet_id": pleet['_id'],
+            "user": user_copy,
+            "text": pleet['text'],
+            "datetime": pleet['datetime']
+        }
+        result_list.append(result)
     if pleets_arr:
-        return flask.Response(json.dumps({"pleets": pleets_arr}), status=200)
-    return flask.Response(json.dumps({"message": "User not found!"}), status=404)
+        return {'pleets': result_list}, 200
+    return {"message": "User not found!"}, 404
 
 
 # request.form.get('username')
 # str(uuid.uuid4()) -- make a new id
-# from datetime import datetime
-# datetime.now().time()
+# import time
+# time.ctime()
 
 # POST make a new pleet
 # not tested yet
@@ -97,38 +136,41 @@ def make_new_pleet():
         if user['username'] == username:
             user_id = user['_id']
     if user_id is not None:
-        Pleets.append({"_id": str(uuid.uuid4()), "datetime": datetime.now().time(), "text": text, "user_id": user_id})
+        id = str(uuid.uuid4())
+        Pleets.append({"_id": id, "datetime": time.time(), "text": text, "user_id": user_id})
         update()
-        return flask.Response(json.dumps({"message": "Pleet successfully added!", "pleet_id": str(uuid.uuid4())}), status=200)
-    return flask.Response(json.dumps({"message": "User not found!"}), status=404)
+        return {"message": "Pleet successfully added!", "pleet_id": id}, 200
+    return {"message": "User not found!"}, 404
 
 # DELETE a pleet
 # to be tested later
 @app.route("/pleets/<pleet_id>", methods=["DELETE"])
 def delete_pleet(pleet_id):
     removed = None
-    for pleet in Pleets:
-        if pleet['_id'] == pleet_id:
-            removed = Pleets.pop(pleet)
+    for i in range(len(Pleets)):
+        if Pleets[i]['_id'] == pleet_id:
+            removed = Pleets.pop(i)
     if removed is not None:
         update()
-        return flask.Response(json.dumps({"message": "Pleet successfully deleted!"}), status=200)
-    return flask.Response(json.dumps({"message": "User not found!"}), status=404)
+        return {"message": "Pleet successfully deleted!"}, 200
+    return {"message": "User not found!"}, 404
 
 # PUT edit profile
 # to be tested later
-@app.route("/user/<user_id>", methods=["PUT"])
+@app.route("/users/<user_id>", methods=["PUT"])
 def edit_profile(user_id):
     display_name = request.form.get('display name')
-    for user in Users:
-        if user['_id'] == user_id:
-            user['display_name'] = display_name
+    for i in range(len(Users)):
+        if Users[i]['_id'] == user_id:
+            # removed = Users.pop(i)
+            Users[i]['display name'] = display_name
+            # Users.append(remov
             update()
-            return flask.Response(json.dumps({"message": "User Profile Successfully edited!"}), status=200)
-    return flask.Response(json.dumps({"message": "User not found!"}), status=404)
+            return {"message": "User Profile Successfully edited!"}, 200
+    return {"message": "User not found!"}, 404
 
 @app.route("/")
 def hello_world():
     return {'data': 'Hello World'}
 
-app.run(debug=True, port=5001)
+app.run(port=5001)
