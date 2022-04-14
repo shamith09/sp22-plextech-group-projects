@@ -1,9 +1,12 @@
-import json
 from flask import Flask, request
+from flask_cors import CORS
+
 import os
-from reset_data import reset
+import json
 import uuid
 import time
+from reset_data import reset
+
 
 ####################
 ### This block initializes the arrays "Users" and "Pleets" from the json file storage system
@@ -35,6 +38,7 @@ def update():
 ####################
 
 app = Flask(__name__)
+CORS(app)
 
 # Testing purposes
 @app.route("/reset", methods=["POST"])
@@ -117,6 +121,7 @@ def get_all_pleets(user_id):
         result_list.append(result)
     if pleets_arr:
         return {'pleets': result_list}, 200
+
     return {"message": "User not found!"}, 404
 
 
