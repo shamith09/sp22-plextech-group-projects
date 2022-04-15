@@ -1,0 +1,21 @@
+.headline {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.boldtext {
+    font-weight: bold;
+}
+
+.pleetbox {
+    width: 200px;
+    height: 200px;
+    border-radius: 2px;
+    border-color: black;
+}
+
+.pleetbox:hover {
+    background-color: lightblue;
+    border-radius: 4px;
+}

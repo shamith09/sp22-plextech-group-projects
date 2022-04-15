@@ -12,21 +12,22 @@ const Pleet = props => {
     const username = user['username'];
     const text = pleets['text'];
     const datetime = pleets['datetime'];
+    const date_int = new Date(datetime);
+    let date_string = date_int.toString();
+    date_string.slice(0, -14);
 
     //headline div should display items in horizontal order on top of the pleet rectangle 
     //pleebox should be the actual rectangle containing the pleet text 
     return (
-        <div>
-            {/*style = "display:flex; flex-direction: row; justify-content: flex-start;" */}
+        <div className = "pleetbox">
             <div className = "headline">
-                <h1> `{display_name}` </h1>
-                <img src = "C:\Users\vukpe\Downloads\screenshot-480-_custom-da951372e8aeb5e94c1577fc58ee06c8c4d93698.png" alt="Profile pic"/>
-                <p> `{username}` . </p>
-                <p> `{datetime}`</p>
+                <h1>{display_name}</h1>
+                <a className = "boldtext" href = {"http://localhost:5002/users/" + user.user_id}>{username}</a>
+                <p className = "boldtext">{date_string}</p>
             </div>
-            {/*style = "width: 200px; height: 200px; border: 1px solid #000;"*/}
-            <div className = "pleetbox"> {/* FIXME: move style to Pleet.css */}
-                <p>`{text}`</p>
+    
+            <div> 
+                <p>{text}</p>
             </div>
         </div>
     );
