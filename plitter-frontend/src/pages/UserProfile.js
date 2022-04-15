@@ -53,7 +53,7 @@ const UserProfile = props => {
             <div className="pleetsclass">
                 <Pleet pleet={el} />
                 <div class="delete_button">
-                    <button onClick={() => delPleet(el.pleet_id)}>DELETE</button>
+                    <button onclick={"window.location.href='/undefined'"}>DELETE</button>
                 </div>
             </div>
         );
@@ -83,7 +83,7 @@ const UserProfile = props => {
         </div>
     );
 }
-
+// onclick="window.location.href='/page2'"
 // query backend (pleets)
 // organize information
 // start designing ui elements
