@@ -75,10 +75,11 @@ const UserProfile = props => {
             <form onSubmit={() => handleSubmit()}>
                 <input type="text" name="newPleet" value={pleetValue} onChange={(value) => handleChange(value)}>
                 </input>
-            </form>
-            <div class="add_button">
                 <button onClick={() => handleSubmit()}>SUBMIT</button>
-            </div>
+            </form>
+            {/* <div class="add_button">
+                <button onClick={() => handleSubmit()}>SUBMIT</button>
+            </div> */}
         </div>
     );
 }
